@@ -97,10 +97,28 @@ const Footer = ({ onOpenGame }: { onOpenQuiz?: () => void; onOpenGame?: () => vo
         </div>
       </div>
 
-      <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} SBI Connects. All rights reserved.</p>
-        <p className="text-xs text-muted-foreground">Built with precision. Engineered for performance.</p>
-      </div>
+<div className="flex flex-col md:flex-row items-center justify-between gap-4">
+
+  {/* Left Side */}
+  <div>
+    <p className="text-xs text-muted-foreground">
+      © {new Date().getFullYear()} SBI Connects. All rights reserved.
+    </p>
+  </div>
+
+  {/* Right Side */}
+  <div className="text-right space-y-1">
+    <p className="text-sm font-medium">
+      Built with precision. Engineered for performance.
+    </p>
+
+    <p className="text-xs text-muted-foreground">
+      Engineering Business EBR37149 | Certified General Contractor CGC1533876
+    </p>
+  </div>
+
+</div>
+      
     </div>
   </footer>
   );
