@@ -9,6 +9,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import { useDynamicFavicon } from "./hooks/useDynamicFavicon";
 import { useFiberQuizTrigger } from "./components/FiberCertQuiz/useFiberQuizTrigger";
 
+import Quote from "./pages/Quote";
+
 const FiberCertQuizModal = lazy(() => import("./components/FiberCertQuiz/FiberCertQuizModal"));
 
 const Index = lazy(() => import("./pages/Index"));
@@ -23,7 +25,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Sitemap = lazy(() => import("./pages/Sitemap"));
 const Resources = lazy(() => import("./pages/Resources"));
 const Glossary = lazy(() => import("./pages/employees/Glossary"));
-
+const Quote = lazy(() => import("./pages/Quote"));
 const queryClient = new QueryClient();
 
 const AppContent = () => {
@@ -59,6 +61,7 @@ const App = () => (
               <Route path="/sitemap" element={<Sitemap />} />
               <Route path="/employees/glossary" element={<Glossary />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/quote" element={<Quote />} />
             </Routes>
           </Suspense>
         </BrowserRouter>

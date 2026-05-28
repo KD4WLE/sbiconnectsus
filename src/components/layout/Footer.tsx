@@ -87,7 +87,7 @@ const Footer = ({ onOpenGame }: { onOpenQuiz?: () => void; onOpenGame?: () => vo
             </li>
             <li className="flex items-center gap-2 text-sm text-muted-foreground">
               <Phone className="h-4 w-4 text-primary shrink-0" />
-              <a href="tel:+14075093004" className="hover:text-primary transition-colors">(407) 509-3004</a>
+              <a href="tel:+14075093004" className="hover:text-primary transition-colors">(727) 297-3897</a>
             </li>
             <li className="flex items-center gap-2 text-sm text-muted-foreground">
               <Mail className="h-4 w-4 text-primary shrink-0" />
