@@ -64,8 +64,16 @@ const Navbar = () => {
             </AnimatePresence>
           </div>
 
-          <Link to="/quote" className={`text-sm transition-colors hover:text-primary ${location.pathname === '/quote' ? 'text-primary' : 'text-muted-foreground'}`}>Contact</Link>
-
+<Link
+  to="/contact"
+  className={`text-sm transition-colors hover:text-primary ${
+    location.pathname === "/contact"
+      ? "text-primary"
+      : "text-muted-foreground"
+  }`}
+>
+  Contact
+</Link>
           <ThemeSwitcher />
 
           <Link

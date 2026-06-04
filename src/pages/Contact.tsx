@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, ArrowRight, Loader2, CheckCircle } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import SeoHead from "@/components/seo/SeoHead";
 import ContactSchemaJsonLd from "@/components/seo/ContactSchemaJsonLd";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -43,52 +41,41 @@ const contactInfo = [
   },
 ];
 
-const initialForm = {
-  name: "",
-  email: "",
-  company: "",
-  phone: "",
-  service: "",
-  message: "",
-};
-
 const Contact = () => {
-  const [form, setForm] = useState(initialForm);
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-  const { toast } = useToast();
+  useEffect(() => {
+    const existingScript = document.querySelector(
+      'script[src="https://js.hsforms.net/forms/embed/v2.js"]'
+    );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+    const createForm = () => {
+      const container = document.getElementById("hubspot-contact-form");
+      if (container) container.innerHTML = "";
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+      if ((window as any).hbspt) {
+        (window as any).hbspt.forms.create({
+          region: "na1",
+          portalId: "51553826",
+          formId: "e486aa51-0b9d-4a20-815f-29dcfa459999",
+          target: "#hubspot-contact-form",
+        });
+      }
+    };
 
-    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
-      toast({ title: "Please fill in all required fields.", variant: "destructive" });
-      return;
+    if (existingScript) {
+      createForm();
+    } else {
+      const script = document.createElement("script");
+      script.src = "https://js.hsforms.net/forms/embed/v2.js";
+      script.async = true;
+      script.onload = createForm;
+      document.body.appendChild(script);
     }
 
-    setSending(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("send-email", {
-        body: form,
-      });
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      setSent(true);
-      setForm(initialForm);
-      toast({ title: "Message sent!", description: "We'll get back to you within one business day." });
-    } catch (err: any) {
-      console.error("Submit error:", err);
-      toast({ title: "Something went wrong.", description: "Please try again or email us directly.", variant: "destructive" });
-    } finally {
-      setSending(false);
-    }
-  };
+    return () => {
+      const container = document.getElementById("hubspot-contact-form");
+      if (container) container.innerHTML = "";
+    };
+  }, []);
 
   return (
     <Layout>
@@ -99,7 +86,7 @@ const Contact = () => {
         keywords="contact SBI Connects, low voltage consultation, infrastructure quote, Longwood FL, structured cabling contractor, technology consultation"
       />
       <ContactSchemaJsonLd />
-      {/* Hero */}
+
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
@@ -115,11 +102,9 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Contact Content */}
       <section className="pb-24 md:pb-32">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid lg:grid-cols-5 gap-10">
-            {/* Contact Info */}
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -149,6 +134,7 @@ const Contact = () => {
                       </div>
                     </div>
                   );
+
                   return item.href ? (
                     <a key={item.label} href={item.href} className="block">
                       {Inner}
@@ -160,7 +146,6 @@ const Contact = () => {
               </div>
             </motion.div>
 
-            {/* Contact Form */}
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -169,122 +154,10 @@ const Contact = () => {
               variants={fadeUp}
               className="lg:col-span-3"
             >
-              {sent ? (
-                <div className="glass-card rounded-2xl p-12 text-center space-y-4">
-                  <CheckCircle className="h-12 w-12 text-primary mx-auto" />
-                  <h3 className="text-xl font-semibold">Thank You!</h3>
-                  <p className="text-muted-foreground text-sm">Your message has been sent. We'll be in touch within one business day.</p>
-                  <button
-                    onClick={() => setSent(false)}
-                    className="mt-4 px-6 py-2.5 rounded-lg bg-secondary text-foreground text-sm font-medium hover:bg-secondary/80 transition-all"
-                  >
-                    Send Another Message
-                  </button>
-                </div>
-              ) : (
-                <form
-                  className="glass-card rounded-2xl p-8 space-y-6"
-                  onSubmit={handleSubmit}
-                >
-                  <h3 className="text-xl font-semibold mb-2">Request a Consultation</h3>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm text-muted-foreground mb-2">Name *</label>
-                      <input
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        required
-                        maxLength={100}
-                        className="w-full px-4 py-3 rounded-lg bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-muted-foreground mb-2">Email *</label>
-                      <input
-                        name="email"
-                        type="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        required
-                        maxLength={255}
-                        className="w-full px-4 py-3 rounded-lg bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm text-muted-foreground mb-2">Company</label>
-                      <input
-                        name="company"
-                        value={form.company}
-                        onChange={handleChange}
-                        maxLength={100}
-                        className="w-full px-4 py-3 rounded-lg bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        placeholder="Your company"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-muted-foreground mb-2">Phone</label>
-                      <input
-                        name="phone"
-                        type="tel"
-                        value={form.phone}
-                        onChange={handleChange}
-                        maxLength={20}
-                        className="w-full px-4 py-3 rounded-lg bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        placeholder="(555) 555-5555"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-muted-foreground mb-2">Service Interest</label>
-                    <select
-                      name="service"
-                      value={form.service}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-secondary/50 border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                    >
-                      <option value="">Select a service...</option>
-                      <option value="network">Network Infrastructure & Data Center</option>
-                      <option value="wireless">Wireless, Mobility & Industrial Connectivity</option>
-                      <option value="security">Security, Access & Life-Safety</option>
-                      <option value="av">Audio-Visual & Communications</option>
-                      <option value="other">Other / Not Sure</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-muted-foreground mb-2">Message *</label>
-                    <textarea
-                      name="message"
-                      value={form.message}
-                      onChange={handleChange}
-                      required
-                      maxLength={2000}
-                      rows={4}
-                      className="w-full px-4 py-3 rounded-lg bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-                      placeholder="Tell us about your project…"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:brightness-110 transition-all glow-gold flex items-center justify-center gap-2 disabled:opacity-60"
-                  >
-                    {sending ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" /> Sending...
-                      </>
-                    ) : (
-                      <>
-                        Send Message <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
-                </form>
-              )}
+              <div className="rounded-2xl bg-white p-8 shadow-lg">
+                <h3 className="text-xl font-semibold mb-6">Request a Consultation</h3>
+                <div id="hubspot-contact-form" />
+              </div>
             </motion.div>
           </div>
         </div>
