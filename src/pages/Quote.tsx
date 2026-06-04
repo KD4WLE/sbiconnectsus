@@ -1,6 +1,31 @@
+import { useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 
 const Quote = () => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://js.hsforms.net/forms/embed/v2.js";
+    script.async = true;
+
+    script.onload = () => {
+      if ((window as any).hbspt) {
+        (window as any).hbspt.forms.create({
+          region: "na1",
+          portalId: "51553826",
+          formId: "e486aa51-0b9d-4a20-815f-29dcfa459999",
+          target: "#hubspot-form",
+        });
+      }
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      const container = document.getElementById("hubspot-form");
+      if (container) container.innerHTML = "";
+    };
+  }, []);
+
   return (
     <Layout>
       <main className="container mx-auto px-4 py-16">
@@ -10,14 +35,8 @@ const Quote = () => {
             Tell us about your project and our team will follow up to schedule a consultation.
           </p>
 
-          <div className="rounded-2xl border bg-card p-4 shadow-sm">
-            {/* Paste Jobber's embed iframe URL here */}
-            <iframe
-              src="https://clienthub.getjobber.com/hubs/2f579759-c710-4a1e-8a10-8435dddcad5b/public/requests/2158156/new"
-              title="SBI Connects Quote Request Form"
-              className="h-[900px] w-full rounded-xl border-0"
-              loading="lazy"
-            />
+          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+            <div id="hubspot-form" />
           </div>
         </section>
       </main>
